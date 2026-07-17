@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C# / .NET Practice Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#080b11;
+    --bg-1:#0e131c;
+    --bg-2:#151b27;
+    --bg-3:#1b2331;
+    --line:rgba(232,197,140,0.12);
+    --line-strong:rgba(232,197,140,0.28);
+    --text-0:#e9ecf3;
+    --text-1:#9aa3b8;
+    --text-2:#5f6a82;
+    --accent:#e6a94c;
+    --accent-soft:rgba(230,169,76,0.14);
+    --teal:#57c7b0;
+    --red:#e5615a;
+    --font-display:'Fraunces', serif;
+    --font-ui:'Space Grotesk', 'Inter', sans-serif;
+    --font-code:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px),
+      radial-gradient(1100px 600px at 15% -10%, rgba(230,169,76,0.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(87,199,176,0.07), transparent 55%),
+      var(--bg-0);
+    color:var(--text-0);
+    font-family:var(--font-ui);
+    line-height:1.55;
+  }
+  a{color:var(--accent);}
+  ::selection{background:var(--accent-soft); color:var(--accent);}
+
+  /* ---------- layout ---------- */
+  .shell{display:flex; min-height:100vh;}
+  .rail{
+    width:230px; flex-shrink:0;
+    border-right:1px solid var(--line);
+    background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    padding:28px 18px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .rail-brand{font-family:var(--font-display); font-style:italic; font-size:1.25rem; color:var(--accent); margin-bottom:4px;}
+  .rail-sub{font-size:0.72rem; color:var(--text-2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:26px;}
+  .rail nav a{
+    display:flex; gap:10px; align-items:baseline;
+    text-decoration:none; color:var(--text-1);
+    font-size:0.86rem; padding:7px 8px; border-radius:6px;
+    border-left:2px solid transparent;
+    transition:all .15s ease;
+  }
+  .rail nav a:hover{color:var(--text-0); background:var(--bg-2); border-left-color:var(--accent);}
+  .rail nav a .n{font-family:var(--font-code); color:var(--text-2); font-size:0.75rem;}
+  .rail nav .group-label{font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--text-2); margin:18px 0 6px 8px;}
+
+  .main{flex:1; min-width:0;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:90px 64px 70px;
+    border-bottom:1px solid var(--line);
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(500px 260px at 85% 20%, rgba(230,169,76,0.16), transparent 70%);
+    pointer-events:none;
+  }
+  .hero .eyebrow{
+    font-family:var(--font-code); color:var(--teal); font-size:0.78rem;
+    letter-spacing:.14em; text-transform:uppercase; margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:var(--font-display); font-weight:600; font-size:3.1rem;
+    margin:0 0 18px; max-width:760px; letter-spacing:-0.01em;
+  }
+  .hero h1 em{color:var(--accent); font-style:italic;}
+  .hero p{color:var(--text-1); max-width:600px; font-size:1.02rem;}
+  .hero .stats{display:flex; gap:36px; margin-top:36px; flex-wrap:wrap;}
+  .hero .stat b{display:block; font-family:var(--font-display); font-size:1.6rem; color:var(--accent);}
+  .hero .stat span{font-size:0.78rem; color:var(--text-2); text-transform:uppercase; letter-spacing:.08em;}
+
+  section{padding:0 64px;}
+  .section-head{padding:56px 0 18px; border-bottom:1px solid var(--line); margin-bottom:34px;}
+  .section-head .tag{font-family:var(--font-code); color:var(--teal); font-size:0.76rem; letter-spacing:.12em; text-transform:uppercase;}
+  .section-head h2{font-family:var(--font-display); font-weight:600; font-size:1.9rem; margin:8px 0 6px;}
+  .section-head p{color:var(--text-1); max-width:640px; font-size:0.94rem;}
+
+  /* ---------- project card ---------- */
+  .project{
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    border-radius:14px;
+    margin-bottom:52px;
+    overflow:hidden;
+    scroll-margin-top:24px;
+  }
+  .project-top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    padding:26px 30px; border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(230,169,76,0.05), transparent);
+  }
+  .project-top .idx{font-family:var(--font-code); color:var(--accent); font-size:0.8rem; letter-spacing:.1em;}
+  .project-top h3{font-family:var(--font-display); font-size:1.5rem; margin:6px 0 0; font-weight:600;}
+  .badge{
+    font-family:var(--font-code); font-size:0.72rem; padding:5px 11px; border-radius:20px;
+    border:1px solid var(--line-strong); color:var(--accent); white-space:nowrap; height:fit-content;
+  }
+  .project-body{padding:26px 30px 30px; display:grid; grid-template-columns:1fr; gap:22px;}
+
+  .brief{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media(max-width:900px){.brief{grid-template-columns:1fr;}}
+  .brief .box{background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+  .brief .box h4{margin:0 0 8px; font-size:0.78rem; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); font-weight:600;}
+  .brief .box ul{margin:0; padding-left:18px; font-size:0.87rem; color:var(--text-1);}
+  .brief .box p{margin:0; font-size:0.87rem; color:var(--text-1);}
+  .brief .box pre{margin:0; font-family:var(--font-code); font-size:0.78rem; color:var(--text-0); white-space:pre-wrap;}
+
+  .editor-wrap{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--bg-3);}
+  .editor-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; background:var(--bg-2); border-bottom:1px solid var(--line);
+    font-family:var(--font-code); font-size:0.76rem; color:var(--text-1);
+  }
+  .editor-bar .dots span{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px;}
+  .dots .d1{background:#e5615a;} .dots .d2{background:#e6a94c;} .dots .d3{background:#57c7b0;}
+  textarea.code{
+    width:100%; min-height:230px; resize:vertical;
+    background:var(--bg-3); color:var(--text-0);
+    font-family:var(--font-code); font-size:0.85rem; line-height:1.65;
+    border:none; padding:16px 18px; outline:none;
+    tab-size:4;
+  }
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    font-family:var(--font-ui); font-weight:600; font-size:0.83rem; cursor:pointer;
+    padding:9px 18px; border-radius:8px; border:1px solid var(--line-strong);
+    background:transparent; color:var(--text-0); transition:all .15s ease;
+  }
+  .btn.primary{background:var(--accent); color:#20150a; border-color:var(--accent);}
+  .btn.primary:hover{filter:brightness(1.08);}
+  .btn:hover{border-color:var(--accent); color:var(--accent);}
+  .btn.ghost{border-color:transparent; color:var(--text-2);}
+  .input-label{font-size:0.76rem; color:var(--text-2); font-family:var(--font-code);}
+  textarea.custom-input{
+    width:100%; min-height:56px; background:var(--bg-2); border:1px solid var(--line);
+    border-radius:8px; color:var(--text-0); font-family:var(--font-code); font-size:0.82rem;
+    padding:10px 12px; resize:vertical;
+  }
+  .output-panel{
+    background:#05070b; border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; font-family:var(--font-code); font-size:0.83rem;
+    min-height:70px; color:#c9d6d1; white-space:pre-wrap;
+  }
+  .output-panel .ok{color:var(--teal);}
+  .output-panel .fail{color:var(--red);}
+  .output-panel .muted{color:var(--text-2);}
+  .static-note{
+    font-size:0.82rem; color:var(--text-2); background:var(--bg-2); border:1px dashed var(--line-strong);
+    border-radius:8px; padding:12px 14px;
+  }
+
+  details.theory{
+    border:1px solid var(--line); border-radius:10px; background:var(--bg-2); padding:2px 18px;
+  }
+  details.theory summary{
+    cursor:pointer; padding:14px 0; font-weight:600; font-size:0.88rem; color:var(--accent);
+    list-style:none; display:flex; align-items:center; gap:8px;
+  }
+  details.theory summary::-webkit-details-marker{display:none;}
+  details.theory summary::before{content:"▸"; transition:transform .15s ease; color:var(--text-2);}
+  details.theory[open] summary::before{transform:rotate(90deg);}
+  details.theory .theory-body{padding:0 0 18px; color:var(--text-1); font-size:0.89rem;}
+  details.theory .theory-body p{margin:0 0 10px;}
+  details.theory .theory-body code{background:var(--bg-3); padding:1px 6px; border-radius:4px; font-family:var(--font-code); color:var(--accent);}
+
+  .explain{font-size:0.92rem; color:var(--text-1);}
+  .explain b{color:var(--text-0);}
+
+  .bug-flag{
+    display:inline-flex; align-items:center; gap:6px; font-size:0.76rem;
+    color:var(--red); border:1px solid rgba(229,97,90,0.35); background:rgba(229,97,90,0.08);
+    padding:4px 10px; border-radius:20px; margin-bottom:10px; font-family:var(--font-code);
+  }
+
+  /* ---------- practice bank ---------- */
+  .bank-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(340px,1fr)); gap:22px; padding-bottom:70px;}
+  .bank-cat{border:1px solid var(--line); border-radius:12px; background:var(--bg-1); padding:20px 22px;}
+  .bank-cat h4{
+    font-family:var(--font-display); font-size:1.05rem; margin:0 0 12px; color:var(--accent);
+    display:flex; align-items:center; justify-content:space-between; font-weight:600;
+  }
+  .bank-cat h4 span{font-family:var(--font-code); font-size:0.7rem; color:var(--text-2); font-weight:400;}
+  .bank-cat ol{margin:0; padding-left:20px; font-size:0.85rem; color:var(--text-1);}
+  .bank-cat ol li{margin-bottom:7px;}
+
+  footer{
+    padding:40px 64px 70px; border-top:1px solid var(--line); color:var(--text-2); font-size:0.82rem;
+  }
+  footer a{color:var(--teal);}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">csharp://lab</div>
+    <div class="rail-sub">.NET practice journal</div>
+    <nav>
+      <div class="group-label">Solved Projects</div>
+      <a href="#p1"><span class="n">01</span> Print Message</a>
+      <a href="#p2"><span class="n">02</span> Add Two Numbers</a>
+      <a href="#p3"><span class="n">03</span> Largest of Three</a>
+      <a href="#p4"><span class="n">04</span> Sum · For Loop</a>
+      <a href="#p5"><span class="n">05</span> Word Count</a>
+      <a href="#p6"><span class="n">06</span> Try / Catch / Finally</a>
+      <a href="#p7"><span class="n">07</span> Base &amp; Derived</a>
+      <a href="#p8"><span class="n">08</span> Operator Overload</a>
+      <a href="#p9"><span class="n">09</span> Single Inheritance</a>
+      <a href="#p10"><span class="n">10</span> File Create / Delete</a>
+      <div class="group-label">More</div>
+      <a href="#bank">Practice Bank</a>
+      <a href="#theoryvault">Theory Vault</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <div class="hero">
+      <div class="eyebrow">// C# fundamentals, worked and re-runnable</div>
+      <h1>Ten small programs, <em>fully editable</em>, and the theory behind every line.</h1>
+      <p>Every exercise below keeps its original problem statement, its instructions, and its example output — plus an in-browser runner so you can tweak the code and see it behave differently, no IDE required.</p>
+      <div class="stats">
+        <div class="stat"><b>10</b><span>Worked Projects</span></div>
+        <div class="stat"><b>160+</b><span>Practice Questions</span></div>
+        <div class="stat"><b>2</b><span>Bugs Found &amp; Explained</span></div>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <div class="tag">Note on the runner</div>
+        <h2>How "Run" works here</h2>
+        <p>A browser can't compile real C#. For the six console programs (01–06) a small in-page interpreter translates the statement shapes you'll actually use at this stage — declarations, <code>Console.Write/WriteLine</code>, <code>Convert.ToInt32</code>, loops, if/else, try/catch — into JavaScript and executes them live, so editing the textarea genuinely changes the output. Programs 07–10 use classes and real file I/O, which need an actual compiler; those stay editable for practice, and a "Show expected output" button reproduces the worked example. For full compilation any time, paste code into <a href="https://dotnetfiddle.net" target="_blank" rel="noopener">dotnetfiddle.net</a> or run it locally with <code>dotnet run</code>.</p>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 1 ============ -->
+    <section id="p1">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">01 / Console Output</div><h3>Print Message</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Print the message <code>"I Love SMU"</code> to the console.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Use <code>Console.WriteLine()</code> to print the message.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p1" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("I Love SMU");
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p1')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p1')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p1">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> <code>Console.WriteLine</code> is the simplest way to send text to standard output, adding a newline afterwards. There's no input, no variables — it exists purely to prove the compile-run-print loop works end to end, which is why it's worth 10 marks despite being one line: it's the checkpoint that your environment, syntax, and entry point (<code>Main</code>) are all correctly wired.</p>
+          <details class="theory">
+            <summary>Hidden theory: the anatomy of a C# program</summary>
+            <div class="theory-body">
+              <p><code>using System;</code> imports the <code>System</code> namespace, which is where <code>Console</code>, basic types, and math helpers live. Without it you'd have to fully qualify everything as <code>System.Console.WriteLine</code>.</p>
+              <p>Every executable C# program needs exactly one entry point: a <code>static void Main(string[] args)</code> method inside a class. <code>static</code> means it belongs to the class itself, not to any instance of it — the runtime calls it before any object exists. <code>string[] args</code> carries command-line arguments, which you can ignore if you don't need them.</p>
+              <p><code>Console.Write</code> vs <code>Console.WriteLine</code>: the first leaves the cursor on the same line, the second appends <code>\n</code> (or <code>\r\n</code> on Windows). This distinction matters a lot once you start building prompts like <code>"Enter a number: "</code> followed by input on the same visual line.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 2 ============ -->
+    <section id="p2">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">02 / Input &amp; Arithmetic</div><h3>Add Two Numbers (User Input)</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Read two integers from the user and print their sum.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Prompt for each number with <code>Console.Write</code>.</li><li>Convert input text to <code>int</code> with <code>Convert.ToInt32</code>.</li><li>Add and display the result.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p2" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.Write("Enter the 1st number - ");
+        int a = Convert.ToInt32(Console.ReadLine());
+
+        Console.Write("Enter the 2nd number - ");
+        int b = Convert.ToInt32(Console.ReadLine());
+
+        int sum = a + b;
+
+        Console.WriteLine("The sum of 2 numbers is = " + sum);
+    }
+}</textarea>
+          </div>
+          <div class="input-label">Custom input (one value per line, consumed in order by each Console.ReadLine)</div>
+          <textarea class="custom-input" id="input-p2">12
+30</textarea>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p2')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p2')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p2">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> <code>Console.ReadLine()</code> always returns a <code>string</code> — even if the user typed digits. <code>Convert.ToInt32(...)</code> parses that string into an <code>int</code> so it can be used in arithmetic; without it, <code>a + b</code> would just glue two strings together ("12" + "30" = "1230") instead of adding numbers.</p>
+          <details class="theory">
+            <summary>Hidden theory: type conversion in C#</summary>
+            <div class="theory-body">
+              <p>C# is statically typed — every variable's type is fixed at compile time. Converting between types is explicit rather than automatic, which is why <code>Convert.ToInt32</code> (or <code>int.Parse</code>) is required instead of just assigning a string into an <code>int</code>.</p>
+              <p><code>Convert.ToInt32</code> throws a <code>FormatException</code> if the string isn't a valid whole number, and an <code>OverflowException</code> if it's outside the <code>int</code> range (roughly ±2.1 billion). <code>int.TryParse</code> is the safer alternative when you don't want an exception for bad input — it returns <code>true</code>/<code>false</code> instead.</p>
+              <p>Note the difference between <code>Convert.ToInt32(null)</code> (returns 0) and <code>int.Parse(null)</code> (throws <code>ArgumentNullException</code>) — a subtle but common interview question.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 3 ============ -->
+    <section id="p3">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">03 / Conditionals</div><h3>Largest of Three Numbers</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Read three integers and print whichever is largest, using <code>if / else if / else</code>.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Declare three <code>int</code> variables from input.</li><li>Compare using <code>&amp;&amp;</code> so each branch checks a number against <em>both</em> others.</li><li>Print the winning value.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p3" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int num1 = Convert.ToInt32(Console.ReadLine());
+        int num2 = Convert.ToInt32(Console.ReadLine());
+        int num3 = Convert.ToInt32(Console.ReadLine());
+
+        if (num1 >= num2 && num1 >= num3)
+        {
+            Console.WriteLine("This is the Largest Number - " + num1);
+        }
+        else if (num2 >= num1 && num2 >= num3)
+        {
+            Console.WriteLine("This is the Largest Number - " + num2);
+        }
+        else
+        {
+            Console.WriteLine("This is the Largest Number - " + num3);
+        }
+    }
+}</textarea>
+          </div>
+          <div class="input-label">Custom input (one value per line)</div>
+          <textarea class="custom-input" id="input-p3">10
+25
+12</textarea>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p3')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p3')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p3">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> each branch asks "am I bigger than <em>both</em> of the others?" — that double condition is what makes the logic correct with only three comparisons instead of needing every possible pairwise check. If the first two conditions fail, the third number must be the largest by elimination, so the final <code>else</code> needs no condition at all.</p>
+          <details class="theory">
+            <summary>Hidden theory: short-circuit evaluation</summary>
+            <div class="theory-body">
+              <p><code>&amp;&amp;</code> and <code>||</code> in C# are <em>short-circuiting</em>: in <code>num1 &gt;= num2 &amp;&amp; num1 &gt;= num3</code>, if the first comparison is already false, the second is never evaluated. This matters more once conditions have side effects or could throw (e.g. <code>arr.Length &gt; 0 &amp;&amp; arr[0] == 5</code> safely avoids an index error on an empty array).</p>
+              <p><code>if / else if / else</code> chains are evaluated top to bottom, and only the first matching branch runs — order can matter when ranges overlap.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 4 ============ -->
+    <section id="p4">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">04 / Loops</div><h3>Sum of First 10 Natural Numbers</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Use a <code>for</code> loop to add up the numbers 1 through 10.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Declare a running total, initialised to 0.</li><li>Loop <code>i</code> from 1 to 10 inclusive, adding each value.</li><li>Print the final total.</li></ul></div>
+          </div>
+          <span class="bug-flag">⚠ contains a bug — see below</span>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p4" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int sum = 0;
+
+        for (int i = 1; i <= 10; i++)
+        {
+            sum = sum + i;
+        }
+        Console.WriteLine("The Sum of fitst 10 natural numbers = " + sum);
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p4')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p4')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p4">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> the loop itself is correct — <code>sum</code> ends at 55. <b>The bug</b> is a typo in the printed string: <code>"fitst"</code> instead of <code>"first"</code>. The math passes every hidden test, but any test asserting the exact output string fails, because <code>"The Sum of fitst 10 natural numbers = 55"</code> ≠ <code>"The Sum of first 10 natural numbers = 55"</code> character-for-character — which is exactly what the screenshot's failing test log shows. Fix it by correcting the spelling in the string literal; try it in the editor above and re-run.</p>
+          <details class="theory">
+            <summary>Hidden theory: for-loops and off-by-one errors</summary>
+            <div class="theory-body">
+              <p>A <code>for</code> loop has three parts: <code>init; condition; increment</code>. Here <code>int i = 1</code> starts the counter, <code>i &lt;= 10</code> keeps it going while true, and <code>i++</code> increases it after each pass. Using <code>i &lt; 10</code> instead would stop one iteration early (a classic off-by-one bug) and give 45 instead of 55.</p>
+              <p>Automated grading typically checks <em>exact string equality</em> against an expected value, not just "did the numbers work out" — which is why a spelling mistake in an otherwise-correct program can still fail every test case, as it does here.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 5 ============ -->
+    <section id="p5">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">05 / Strings</div><h3>Count Total Words in a String</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Read a sentence and print how many words it contains.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Read the line with <code>Console.ReadLine()</code>.</li><li>Split on spaces, discarding empty entries from repeated spaces.</li><li>Print <code>words.Length</code>.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p5" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string sentence = Console.ReadLine();
+        string[] words = sentence.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        Console.WriteLine("Total number of words = " + words.Length);
+    }
+}</textarea>
+          </div>
+          <div class="input-label">Custom input (a single sentence)</div>
+          <textarea class="custom-input" id="input-p5">The quick brown fox jumps over lazy</textarea>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p5')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p5')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p5">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> <code>string.Split(' ', StringSplitOptions.RemoveEmptyEntries)</code> breaks the sentence into an array wherever a space appears, and the <code>RemoveEmptyEntries</code> option throws away any empty strings that would otherwise appear from double spaces or leading/trailing whitespace. <code>words.Length</code> — the array's element count — is then the word count.</p>
+          <details class="theory">
+            <summary>Hidden theory: strings and arrays in C#</summary>
+            <div class="theory-body">
+              <p>A C# <code>string</code> is an immutable sequence of characters — every operation like <code>Split</code>, <code>Trim</code>, or <code>ToUpper</code> returns a <em>new</em> string or array rather than modifying the original in place.</p>
+              <p><code>Split</code> without <code>RemoveEmptyEntries</code> would count consecutive spaces as producing empty <code>""</code> elements, silently inflating the word count on messy input — a common source of subtle bugs in text-processing exercises.</p>
+              <p>Arrays in C# have a fixed size once created and expose it via <code>.Length</code> (not <code>.Count()</code>, which is a LINQ extension method for any sequence, including arrays, lists, and more).</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 6 ============ -->
+    <section id="p6">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">06 / Exception Handling</div><h3>Validate Integer Input (try–catch–finally)</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Read a number and throw if it's outside 0–999; handle bad (non-numeric) input separately; always print a completion message.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li><code>try</code> block converts input and range-checks it, throwing a custom message if out of range.</li><li><code>catch (FormatException)</code> handles non-numeric input.</li><li><code>catch (Exception ex)</code> handles the manually thrown exception, printing <code>ex.Message</code>.</li><li><code>finally</code> always runs, valid or not.</li></ul></div>
+          </div>
+          <span class="bug-flag">⚠ contains a bug — see below</span>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable</span></div>
+            <textarea class="code" id="code-p6" spellcheck="false">using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        try
+        {
+            Console.Write("Enter a number: ");
+            int num = Convert.ToInt32(Console.ReadLine());
+
+            if (num < 0 || num > 999)
+            {
+                throw new Exception("Number must be between 0 and 999.");
+            }
+
+            Console.WriteLine("Valid number entered.");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Error: Please enter a valid integer.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Program execution completed.");
+        }
+    }
+}</textarea>
+          </div>
+          <div class="input-label">Custom input (a single value — try 50, then -5, then "abc")</div>
+          <textarea class="custom-input" id="input-p6">50</textarea>
+          <div class="btn-row">
+            <button class="btn primary" onclick="runProject('p6')">▶ Compile &amp; Run</button>
+            <button class="btn" onclick="resetProject('p6')">Reset</button>
+          </div>
+          <div class="output-panel" id="output-p6">Click "Compile &amp; Run" to see output here.</div>
+          <p class="explain"><b>What it does:</b> the <code>try</code> block converts and range-checks the number; a value outside 0–999 is rejected by manually <code>throw</code>ing an <code>Exception</code>, which the second <code>catch</code> block picks up. Non-numeric text makes <code>Convert.ToInt32</code> itself throw a <code>FormatException</code>, caught by the first <code>catch</code>. The <code>finally</code> block runs in every case.<br><br><b>The bug:</b> the expected output for valid input is <code>"Valid number entered:50"</code> (echoing the value back), but the code prints the fixed string <code>"Valid number entered."</code> with no number at all — that's why every "valid input" test case fails even though the logic is otherwise sound. Fix by changing the line to <code>Console.WriteLine("Valid number entered:" + num);</code> and re-run above to confirm.</p>
+          <details class="theory">
+            <summary>Hidden theory: exception handling in depth</summary>
+            <div class="theory-body">
+              <p>All C# exceptions derive from <code>System.Exception</code>. <code>FormatException</code> and the more general <code>Exception</code> both fit that hierarchy, which is why <code>catch (Exception ex)</code> would technically also catch a <code>FormatException</code> if it appeared first — <b>catch order matters</b>: put the most specific exception types before the more general ones, or the general block "steals" cases meant for a more specific handler.</p>
+              <p><code>throw new Exception("message")</code> creates and raises an exception object on demand — useful for enforcing business rules (like a valid numeric range) that the language itself has no built-in check for.</p>
+              <p><code>finally</code> runs whether the <code>try</code> succeeded, an exception was caught, or even if an exception was <em>not</em> caught at all — it's the right place for cleanup code (closing files, releasing connections) that must happen regardless of outcome.</p>
+              <p>Overusing exceptions for ordinary control flow (like validating input, which happens on every run) is considered less idiomatic in C# than <code>int.TryParse</code> style validation — this exercise deliberately uses exceptions to teach the mechanics.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 7 ============ -->
+    <section id="p7">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">07 / OOP · Inheritance</div><h3>Demonstrating Base and Derived Class</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Illustrate the use of a derived class and a base class.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Read the statement and instructions.</li><li>Write code matching the example input/output.</li><li>The output should match the example exactly.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable · needs a real compiler</span></div>
+            <textarea class="code" id="code-p7" spellcheck="false">using System;
+
+class Animal
+{
+    public string Name;
+    public Animal(string name)
+    {
+        Name = name;
+    }
+    public void Eat()
+    {
+        Console.WriteLine(Name + " is eating.");
+    }
+}
+
+class Dog : Animal
+{
+    public Dog(string name) : base(name) { }
+    public void Bark()
+    {
+        Console.WriteLine(Name + " is barking.");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string[] names = { "Tommy", "Bruno", "Rocky", "Max2025", "Charlie" };
+        foreach (string n in names)
+        {
+            Dog d = new Dog(n);
+            d.Eat();
+            d.Bark();
+            Console.WriteLine();
+        }
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="showExpected('p7')">Show expected output</button>
+          </div>
+          <div class="output-panel" id="output-p7">This program defines classes, so it needs a real C# compiler. Click above to see the worked example output, or paste this into dotnetfiddle.net to actually run it.</div>
+          <p class="explain"><b>What it does:</b> <code>Animal</code> is the <b>base class</b> holding a shared <code>Name</code> field and an <code>Eat()</code> method. <code>Dog : Animal</code> is the <b>derived class</b> — the colon means "Dog inherits from Animal" — so every <code>Dog</code> automatically has <code>Name</code> and <code>Eat()</code> for free, and adds its own <code>Bark()</code>. <code>: base(name)</code> in the constructor forwards the name up to the parent's constructor so it gets initialised in one place.</p>
+          <details class="theory">
+            <summary>Hidden theory: inheritance and the "is-a" relationship</summary>
+            <div class="theory-body">
+              <p>Inheritance models an <b>is-a</b> relationship: a <code>Dog</code> <em>is an</em> <code>Animal</code>, so it makes sense for it to reuse Animal's behaviour rather than duplicating it. Contrast this with <b>composition</b> ("has-a"), where a class holds a reference to another object instead of extending it — often a more flexible design in practice.</p>
+              <p>C# supports only <b>single inheritance</b> for classes (one direct base class), unlike some languages that allow multiple. Shared behaviour across unrelated classes is instead achieved through <b>interfaces</b>.</p>
+              <p><code>public</code> access lets a member be seen from outside the class; marking <code>Name</code> as <code>protected</code> instead would let derived classes use it while still hiding it from the outside world — generally the safer default for inherited state.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 8 ============ -->
+    <section id="p8">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">08 / OOP · Operator Overloading</div><h3>Illustrate Binary Operator Overloading</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Overload <code>+</code> so two custom <code>Number</code> objects can be added directly.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Class with an integer <code>Value</code> field and a constructor.</li><li>Overload <code>operator +</code> to add two objects' values.</li><li>Read two ints, build two objects, add them, display the result.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable · needs a real compiler</span></div>
+            <textarea class="code" id="code-p8" spellcheck="false">using System;
+
+class Number
+{
+    public int Value;
+    public Number(int value)
+    {
+        Value = value;
+    }
+    public static Number operator +(Number a, Number b)
+    {
+        return new Number(a.Value + b.Value);
+    }
+    public void Display()
+    {
+        Console.WriteLine(Value);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int x = Convert.ToInt32(Console.ReadLine());
+        int y = Convert.ToInt32(Console.ReadLine());
+
+        Number n1 = new Number(x);
+        Number n2 = new Number(y);
+        Number result = n1 + n2;
+
+        result.Display();
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="showExpected('p8')">Show expected output</button>
+          </div>
+          <div class="output-panel" id="output-p8">This program overloads an operator on a custom class, so it needs a real C# compiler. Click above to see the worked example output.</div>
+          <p class="explain"><b>What it does:</b> <code>public static Number operator +(Number a, Number b)</code> teaches the compiler what <code>n1 + n2</code> means when both sides are <code>Number</code> objects — instead of adding the objects themselves (which is meaningless), it returns a new <code>Number</code> wrapping the sum of their <code>Value</code> fields.</p>
+          <details class="theory">
+            <summary>Hidden theory: operator overloading</summary>
+            <div class="theory-body">
+              <p>Overloadable operators in C# include arithmetic (<code>+ - * / %</code>), comparison (<code>== != &lt; &gt;</code>), and a few others — but not all of them (e.g. <code>&amp;&amp;</code> and <code>||</code> can't be overloaded directly). Overloads must be <code>public static</code> because they're not tied to a single instance; they take both operands as parameters.</p>
+              <p>Overloading <code>==</code> conventionally means you should also override <code>Equals()</code> and <code>GetHashCode()</code>, so the type behaves consistently in collections like <code>Dictionary</code> and <code>HashSet</code>.</p>
+              <p>Used well, operator overloading makes domain types (money, vectors, complex numbers) read naturally in code; used poorly, it can make <code>+</code> do something surprising — a common design-review concern.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 9 ============ -->
+    <section id="p9">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">09 / OOP · Single Inheritance</div><h3>Base and Derived Class (Student / Marks)</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Accept a student's name and marks, storing/displaying each through separate classes linked by inheritance.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Base class stores and displays the name.</li><li>Derived class inherits it and adds marks storage/display.</li><li>Read name and marks in <code>Main</code>, display both via the derived object.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable · needs a real compiler</span></div>
+            <textarea class="code" id="code-p9" spellcheck="false">using System;
+
+class Student
+{
+    protected string name;
+
+    public void SetName(string n)
+    {
+        name = n;
+    }
+    public void ShowName()
+    {
+        Console.WriteLine("Student Name: " + name);
+    }
+}
+
+class Marks : Student
+{
+    private int marks;
+
+    public void SetMarks(int m)
+    {
+        marks = m;
+    }
+    public void ShowMarks()
+    {
+        Console.WriteLine("Marks: " + marks);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Marks m = new Marks();
+
+        Console.Write("Enter student name: ");
+        string name = Console.ReadLine();
+        Console.Write("Enter marks: ");
+        int marks = Convert.ToInt32(Console.ReadLine());
+
+        m.SetName(name);
+        m.SetMarks(marks);
+
+        m.ShowName();
+        m.ShowMarks();
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="showExpected('p9')">Show expected output</button>
+          </div>
+          <div class="output-panel" id="output-p9">This program defines classes, so it needs a real C# compiler. Click above to see the worked example output.</div>
+          <p class="explain"><b>What it does:</b> <code>Student</code> holds the name behind a <code>protected</code> field — visible to <code>Student</code> itself and anything that inherits from it, but not from outside. <code>Marks : Student</code> inherits that name-handling for free and layers on its own private <code>marks</code> field and matching setter/getter-style methods, so one <code>Marks</code> object can show both pieces of data.</p>
+          <details class="theory">
+            <summary>Hidden theory: access modifiers</summary>
+            <div class="theory-body">
+              <p><code>public</code> — visible everywhere. <code>private</code> — visible only inside the declaring class. <code>protected</code> — visible inside the declaring class <em>and</em> any class that derives from it, which is exactly why <code>Marks</code> can rely on <code>name</code> being set correctly without redeclaring it.</p>
+              <p>This is <b>encapsulation</b> in practice: each class exposes only the methods needed to interact with it (<code>SetName</code>, <code>ShowName</code>) while keeping its internal storage details private or protected — callers don't need to know or care how the name is stored.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 10 ============ -->
+    <section id="p10">
+      <div class="project">
+        <div class="project-top">
+          <div><div class="idx">10 / File I/O</div><h3>Create a Blank File, Delete if it Exists</h3></div>
+          <div class="badge">10 Mark</div>
+        </div>
+        <div class="project-body">
+          <div class="brief">
+            <div class="box"><h4>Statement</h4><p>Create a blank file on disk, deleting any existing file at that path first.</p></div>
+            <div class="box"><h4>Instructions</h4><ul><li>Import <code>System.IO</code>.</li><li>Check <code>File.Exists</code>; if true, delete it first.</li><li>Create a new blank file and confirm with messages.</li></ul></div>
+          </div>
+          <div class="editor-wrap">
+            <div class="editor-bar"><span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span>Main.cs</span><span>editable · needs a real compiler + filesystem</span></div>
+            <textarea class="code" id="code-p10" spellcheck="false">using System;
+using System.IO;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string path = "sample.txt";
+
+        if (File.Exists(path))
+        {
+            Console.WriteLine("File already exists. Deleting the file...");
+            File.Delete(path);
+            Console.WriteLine("File deleted successfully.");
+        }
+
+        File.Create(path).Close();
+        Console.WriteLine("New blank file created: " + path);
+    }
+}</textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" onclick="showExpected('p10')">Show expected output</button>
+          </div>
+          <div class="output-panel" id="output-p10">This program touches the real filesystem, so it can only run on an actual machine (Visual Studio, dotnet run, etc). Click above to see the worked example output.</div>
+          <p class="explain"><b>What it does:</b> <code>File.Exists(path)</code> checks the disk before doing anything destructive. If a file is already there it's deleted and the deletion is confirmed; either way, <code>File.Create(path).Close()</code> makes a fresh empty file — <code>.Close()</code> matters because <code>File.Create</code> returns an open file stream, and leaving it open would lock the file.</p>
+          <details class="theory">
+            <summary>Hidden theory: file handling and resource cleanup</summary>
+            <div class="theory-body">
+              <p><code>System.IO</code> is the namespace for file and stream operations: <code>File</code> (static helpers for whole-file operations), <code>FileStream</code>, <code>StreamReader</code>/<code>StreamWriter</code> for text.</p>
+              <p>File handles are an <b>unmanaged resource</b> — the garbage collector doesn't reliably clean them up promptly, so they must be closed explicitly (or wrapped in a <code>using</code> statement, which calls <code>Dispose()</code>/<code>Close()</code> automatically even if an exception occurs). Forgetting this is a classic cause of "file is being used by another process" errors.</p>
+              <p>Idiomatically, this whole method is safer written as <code>using (File.Create(path)) { }</code>, which guarantees the stream closes even if something throws in between.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRACTICE BANK ============ -->
+    <section id="bank">
+      <div class="section-head">
+        <div class="tag">Keep going</div>
+        <h2>Practice Bank — 160 more questions</h2>
+        <p>Grouped by topic and roughly ordered by difficulty within each group, so you can work top-to-bottom through a category or dip in wherever your current project needs reinforcement.</p>
+      </div>
+      <div class="bank-grid">
+
+        <div class="bank-cat"><h4>Basics &amp; Syntax <span>14</span></h4><ol>
+          <li>Print your name, age, and favorite language on three separate lines.</li>
+          <li>Print a multi-line ASCII shape (e.g. a triangle) using WriteLine.</li>
+          <li>Take a name as input and print a personalised greeting.</li>
+          <li>Print the size (in bytes) of each built-in numeric type using sizeof.</li>
+          <li>Demonstrate the difference between Console.Write and Console.WriteLine with three prints.</li>
+          <li>Swap two variables' values without using a third variable.</li>
+          <li>Swap two variables using a temporary variable.</li>
+          <li>Read a value and print its runtime type using GetType().</li>
+          <li>Demonstrate implicit vs explicit type casting with an int and a double.</li>
+          <li>Show integer division vs floating-point division with the same two numbers.</li>
+          <li>Print the minimum and maximum values of int, long, and double.</li>
+          <li>Write a program that reads and prints a single character.</li>
+          <li>Demonstrate string interpolation ($"...") versus string concatenation.</li>
+          <li>Print today's date and time using DateTime.Now.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Variables, Types &amp; Operators <span>15</span></h4><ol>
+          <li>Convert a temperature from Celsius to Fahrenheit and back.</li>
+          <li>Calculate simple interest given principal, rate, and time.</li>
+          <li>Calculate compound interest for a given number of years.</li>
+          <li>Find the area and perimeter of a rectangle from user input.</li>
+          <li>Find the area of a circle given its radius.</li>
+          <li>Convert kilometers to miles and vice versa.</li>
+          <li>Compute the average of five numbers entered by the user.</li>
+          <li>Demonstrate the modulus operator by checking if a number is even or odd.</li>
+          <li>Demonstrate increment/decrement operators (prefix vs postfix) with printed steps.</li>
+          <li>Demonstrate all comparison operators on two input numbers.</li>
+          <li>Demonstrate the ternary operator to find the larger of two numbers.</li>
+          <li>Demonstrate bitwise AND, OR, XOR, and NOT on two integers.</li>
+          <li>Demonstrate left-shift and right-shift operators.</li>
+          <li>Convert an integer to binary, octal, and hexadecimal string representation.</li>
+          <li>Swap the digits of a two-digit number (e.g. 42 → 24).</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Control Flow <span>15</span></h4><ol>
+          <li>Check whether a number is positive, negative, or zero.</li>
+          <li>Check whether a year is a leap year.</li>
+          <li>Grade a student's marks into A/B/C/D/F using if-else.</li>
+          <li>Build a simple calculator using switch on an operator character.</li>
+          <li>Check whether a triangle is valid given three side lengths.</li>
+          <li>Classify a triangle as equilateral, isosceles, or scalene.</li>
+          <li>Determine the day name (Mon–Sun) from a number 1–7 using switch.</li>
+          <li>Check whether a character is a vowel or consonant.</li>
+          <li>Check whether a character is uppercase, lowercase, digit, or symbol.</li>
+          <li>Find the largest of four numbers using nested if statements.</li>
+          <li>Determine ticket price based on age brackets (child/adult/senior).</li>
+          <li>Check eligibility to vote based on age input.</li>
+          <li>Build a simple traffic-light state description program using switch.</li>
+          <li>Use pattern matching (switch expression) to classify a number's sign.</li>
+          <li>Validate a password against basic length/character rules using if-else.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Loops <span>15</span></h4><ol>
+          <li>Print numbers 1 to 100 using a while loop.</li>
+          <li>Print all even numbers between 1 and 50.</li>
+          <li>Print the multiplication table of a user-given number.</li>
+          <li>Find the factorial of a number using a for loop.</li>
+          <li>Find the factorial of a number using a while loop.</li>
+          <li>Print the Fibonacci sequence up to N terms.</li>
+          <li>Reverse the digits of a number using a loop.</li>
+          <li>Check whether a number is a palindrome.</li>
+          <li>Check whether a number is prime.</li>
+          <li>Print all prime numbers up to 100.</li>
+          <li>Find the sum of digits of a number.</li>
+          <li>Find the GCD (HCF) of two numbers using a loop.</li>
+          <li>Find the LCM of two numbers.</li>
+          <li>Print a right-angled triangle pattern of stars using nested loops.</li>
+          <li>Print a pyramid number pattern using nested loops.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Arrays <span>14</span></h4><ol>
+          <li>Read N numbers into an array and print their sum and average.</li>
+          <li>Find the largest and smallest elements in an array.</li>
+          <li>Reverse an array in place without using a built-in method.</li>
+          <li>Sort an array using bubble sort.</li>
+          <li>Sort an array using selection sort.</li>
+          <li>Search for a value in an array using linear search.</li>
+          <li>Search for a value in a sorted array using binary search.</li>
+          <li>Count how many even and odd numbers are in an array.</li>
+          <li>Remove duplicate values from an array.</li>
+          <li>Merge two sorted arrays into one sorted array.</li>
+          <li>Find the second-largest element in an array.</li>
+          <li>Rotate an array left by one position.</li>
+          <li>Transpose a 2D (rectangular) array/matrix.</li>
+          <li>Add two matrices read from user input.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Strings <span>15</span></h4><ol>
+          <li>Reverse a string without using Array.Reverse.</li>
+          <li>Check whether a string is a palindrome.</li>
+          <li>Count vowels and consonants in a sentence.</li>
+          <li>Count the occurrences of a specific character in a string.</li>
+          <li>Check whether two strings are anagrams of each other.</li>
+          <li>Convert a string to uppercase and lowercase without built-in methods.</li>
+          <li>Remove all whitespace from a string.</li>
+          <li>Find the first non-repeating character in a string.</li>
+          <li>Replace all occurrences of a word in a sentence.</li>
+          <li>Check whether a string contains only digits.</li>
+          <li>Capitalize the first letter of every word in a sentence.</li>
+          <li>Find the longest word in a sentence.</li>
+          <li>Concatenate two strings without using the + operator.</li>
+          <li>Convert a string to a char array and back.</li>
+          <li>Compare two strings ignoring case using StringComparison.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Methods &amp; Recursion <span>10</span></h4><ol>
+          <li>Write a method that returns whether a number is prime.</li>
+          <li>Write a recursive method to compute factorial.</li>
+          <li>Write a recursive method to compute the nth Fibonacci number.</li>
+          <li>Write a method with default parameter values.</li>
+          <li>Demonstrate method overloading with two versions of an Add method.</li>
+          <li>Write a method using the out parameter to return two values.</li>
+          <li>Write a method using ref to modify a caller's variable.</li>
+          <li>Write a recursive method to reverse a string.</li>
+          <li>Write a recursive method for GCD (Euclidean algorithm).</li>
+          <li>Write a method using params to accept a variable number of arguments.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>OOP · Classes &amp; Objects <span>15</span></h4><ol>
+          <li>Create a BankAccount class with Deposit and Withdraw methods.</li>
+          <li>Create a Rectangle class with Area() and Perimeter() methods.</li>
+          <li>Demonstrate constructor overloading in a Book class.</li>
+          <li>Demonstrate a static field shared across all instances of a class (e.g. an ID counter).</li>
+          <li>Demonstrate the difference between an instance method and a static method.</li>
+          <li>Create a class with a read-only property and show it can't be modified after construction.</li>
+          <li>Demonstrate the this keyword resolving a naming conflict in a constructor.</li>
+          <li>Create a class implementing IComparable to sort a list of custom objects.</li>
+          <li>Demonstrate a copy constructor.</li>
+          <li>Create a Circle class using an auto-implemented property for Radius.</li>
+          <li>Demonstrate object initializer syntax versus a constructor call.</li>
+          <li>Create a class with a private field and public get/set accessors (manual property).</li>
+          <li>Demonstrate the difference between a struct and a class for a simple Point type.</li>
+          <li>Create a Singleton class (only one instance ever exists).</li>
+          <li>Override ToString() on a custom class to control how it prints.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Inheritance &amp; Polymorphism <span>10</span></h4><ol>
+          <li>Demonstrate method overriding with a Shape base class and Circle/Square derived classes.</li>
+          <li>Demonstrate an abstract class with an abstract Area() method.</li>
+          <li>Demonstrate an interface implemented by two unrelated classes.</li>
+          <li>Demonstrate multilevel inheritance (Animal → Mammal → Dog).</li>
+          <li>Demonstrate the sealed keyword preventing further inheritance.</li>
+          <li>Demonstrate calling a base class method explicitly with base.MethodName().</li>
+          <li>Demonstrate runtime polymorphism using a list of base-type references holding derived objects.</li>
+          <li>Demonstrate the difference between method overloading and method overriding.</li>
+          <li>Demonstrate hiding a base member with the new keyword and explain why it's discouraged.</li>
+          <li>Create an interface with a default method and two implementing classes.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Exception Handling <span>10</span></h4><ol>
+          <li>Handle a DivideByZeroException when dividing two integers.</li>
+          <li>Handle an IndexOutOfRangeException when accessing an invalid array index.</li>
+          <li>Create and throw a custom exception class (e.g. InsufficientBalanceException).</li>
+          <li>Demonstrate nested try-catch blocks.</li>
+          <li>Demonstrate catching multiple exception types with one catch(Exception) block and inspecting the type.</li>
+          <li>Demonstrate rethrowing an exception with throw; versus throw ex;.</li>
+          <li>Demonstrate using finally to close a resource even when an exception occurs.</li>
+          <li>Validate that user input is within a numeric range, throwing a custom message otherwise.</li>
+          <li>Demonstrate NullReferenceException and how to guard against it.</li>
+          <li>Demonstrate the using statement as an alternative to manual try-finally cleanup.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>File Handling <span>10</span></h4><ol>
+          <li>Write a string to a text file and read it back.</li>
+          <li>Append a line to an existing text file.</li>
+          <li>Count the number of lines in a text file.</li>
+          <li>Copy the contents of one file into another.</li>
+          <li>Check whether a directory exists and create it if not.</li>
+          <li>List all files in a given directory.</li>
+          <li>Read a CSV file and print each row split into fields.</li>
+          <li>Write an array of numbers to a file, one per line.</li>
+          <li>Read a file and count occurrences of a specific word.</li>
+          <li>Use StreamReader/StreamWriter explicitly instead of the File helper class.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Collections <span>10</span></h4><ol>
+          <li>Store student names in a List&lt;string&gt; and print them sorted.</li>
+          <li>Store name-to-age pairs in a Dictionary&lt;string,int&gt; and look one up.</li>
+          <li>Remove an item from a List by value and by index.</li>
+          <li>Use a Stack&lt;T&gt; to check whether a string's brackets are balanced.</li>
+          <li>Use a Queue&lt;T&gt; to simulate a simple ticket queue.</li>
+          <li>Use a HashSet&lt;T&gt; to find unique elements from a list with duplicates.</li>
+          <li>Sort a List of custom objects by a property using a Comparison delegate.</li>
+          <li>Iterate a Dictionary and print all key-value pairs.</li>
+          <li>Convert an array to a List and back.</li>
+          <li>Use a List&lt;List&lt;int&gt;&gt; to represent and print a jagged 2D structure.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>LINQ &amp; Delegates <span>10</span></h4><ol>
+          <li>Use LINQ's Where to filter even numbers from a list.</li>
+          <li>Use LINQ's Select to project a list of names to their lengths.</li>
+          <li>Use LINQ's OrderBy to sort a list of objects by a property.</li>
+          <li>Use LINQ's Sum, Max, Min, and Average on a list of numbers.</li>
+          <li>Use LINQ's GroupBy to group students by grade.</li>
+          <li>Declare and invoke a simple delegate wrapping a method.</li>
+          <li>Use an Action&lt;T&gt; and a Func&lt;T,TResult&gt; to pass behaviour into a method.</li>
+          <li>Demonstrate a lambda expression replacing a named method for filtering.</li>
+          <li>Demonstrate an event using a delegate (e.g. a simple OnAlarm event).</li>
+          <li>Use LINQ's Any and All to validate a list of numbers against a condition.</li>
+        </ol></div>
+
+        <div class="bank-cat"><h4>Interview-Style / Misc <span>12</span></h4><ol>
+          <li>Explain and demonstrate the difference between value types and reference types with a code example.</li>
+          <li>Demonstrate boxing and unboxing between an int and an object.</li>
+          <li>Demonstrate the difference between == and .Equals() for strings versus custom objects.</li>
+          <li>Demonstrate a shallow copy versus a deep copy of an object containing a nested object.</li>
+          <li>Write a program that intentionally causes and then explains a StackOverflowException scenario (infinite recursion), in comments only.</li>
+          <li>Demonstrate nullable value types (int?) and the null-coalescing operator (??).</li>
+          <li>Demonstrate readonly vs const for a class field.</li>
+          <li>Demonstrate the yield keyword building a simple custom iterator.</li>
+          <li>Demonstrate string immutability by showing two references after a "modification".</li>
+          <li>Write a program demonstrating var versus explicit typing, and when each is preferred.</li>
+          <li>Demonstrate a simple generic method that works for both int and string arguments.</li>
+          <li>Build a tiny console-based to-do list supporting add, remove, and list, backed by a List&lt;string&gt;.</li>
+        </ol></div>
+
+      </div>
+    </section>
+
+    <!-- ============ THEORY VAULT ============ -->
+    <section id="theoryvault">
+      <div class="section-head">
+        <div class="tag">Reference</div>
+        <h2>Theory Vault</h2>
+        <p>The concepts underneath the ten projects above, gathered in one place for quick review before a quiz or interview.</p>
+      </div>
+      <div style="display:grid; gap:14px; padding-bottom:80px; max-width:900px;">
+
+        <details class="theory">
+          <summary>The four pillars of OOP</summary>
+          <div class="theory-body">
+            <p><b>Encapsulation</b> — bundling data and the methods that operate on it, hiding internal state behind controlled access (private fields, public methods/properties).</p>
+            <p><b>Abstraction</b> — exposing only what's necessary through a simplified interface (e.g. an abstract class or interface) while hiding implementation detail.</p>
+            <p><b>Inheritance</b> — a class acquiring the members of a base class, modelling "is-a" relationships and enabling code reuse.</p>
+            <p><b>Polymorphism</b> — the same method call behaving differently depending on the actual runtime type of the object, via overriding (runtime) or overloading (compile-time).</p>
+          </div>
+        </details>
+
+        <details class="theory">
+          <summary>Value types vs reference types</summary>
+          <div class="theory-body">
+            <p><code>int</code>, <code>double</code>, <code>bool</code>, <code>char</code>, and <code>struct</code>s are <b>value types</b> — assigning one variable to another copies the value. Classes, arrays, and strings are <b>reference types</b> — assigning copies the reference, so both variables point at the same underlying object.</p>
+            <p>This is why passing a large custom class into a method and mutating a field inside it affects the caller's object too, while passing an int and changing it inside the method does not affect the caller's copy — unless you use <code>ref</code>.</p>
+          </div>
+        </details>
+
+        <details class="theory">
+          <summary>Compilation model: from .cs to running program</summary>
+          <div class="theory-body">
+            <p>The C# compiler (<code>csc</code> or the one built into <code>dotnet build</code>) turns your <code>.cs</code> source into <b>IL (Intermediate Language)</b> bytecode inside a <code>.dll</code>/<code>.exe</code>. The <b>.NET runtime (CLR)</b> then JIT-compiles that IL into native machine code at execution time — this is what makes .NET code both portable across platforms and fast to run.</p>
+          </div>
+        </details>
+
+        <details class="theory">
+          <summary>Exception hierarchy at a glance</summary>
+          <div class="theory-body">
+            <p><code>System.Exception</code> is the root. Common built-ins beneath it include <code>SystemException</code> → <code>FormatException</code>, <code>OverflowException</code>, <code>NullReferenceException</code>, <code>IndexOutOfRangeException</code>, <code>DivideByZeroException</code>, and <code>ArgumentException</code> (with <code>ArgumentNullException</code> and <code>ArgumentOutOfRangeException</code> beneath that). Custom exceptions should derive from <code>Exception</code> and typically add a constructor that forwards a message.</p>
+          </div>
+        </details>
+
+        <details class="theory">
+          <summary>Why tests fail even when the "logic" is right</summary>
+          <div class="theory-body">
+            <p>Two of the projects above (04 and 06) demonstrate this directly: automated graders usually assert <b>exact string equality</b> against an expected output. A correct algorithm wrapped in a misspelled or incomplete message still fails every test case, because the grader has no notion of "close enough" — it's comparing characters, not intent. Always re-read the exact expected string in a problem statement before assuming a failing test means your logic is wrong.</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <footer>
+      Built as a personal practice reference. Programs 01–06 run live in this page via a small C#→JavaScript translator; it understands the statement shapes used above but is not a full C# compiler. For anything beyond that — or to double check any output — use <a href="https://dotnetfiddle.net" target="_blank" rel="noopener">dotnetfiddle.net</a> or <code>dotnet run</code> locally.
+    </footer>
+  </main>
+</div>
+
+<script>
+  // ---------- store originals for reset ----------
+  const ORIGINAL = {};
+  document.querySelectorAll('textarea.code').forEach(t => ORIGINAL[t.id] = t.value);
+
+  function resetProject(id){
+    const t = document.getElementById('code-'+id);
+    t.value = ORIGINAL['code-'+id];
+    document.getElementById('output-'+id).textContent = 'Reset. Click "Compile & Run" to see output here.';
+  }
+
+  // ---------- brace matching ----------
+  function matchBrace(str, openIdx){
+    let depth = 0;
+    for (let i = openIdx; i < str.length; i++){
+      if (str[i] === '{') depth++;
+      else if (str[i] === '}'){ depth--; if (depth === 0) return i; }
+    }
+    return -1;
+  }
+
+  function extractMainBody(src){
+    const m = src.indexOf('Main(');
+    if (m < 0) return null;
+    const b = src.indexOf('{', m);
+    if (b < 0) return null;
+    const e = matchBrace(src, b);
+    if (e < 0) return null;
+    return src.slice(b+1, e);
+  }
+
+  // ---------- restructure try / catch / finally ----------
+  function transpileTryCatch(body){
+    const tIdx = body.search(/\btry\b/);
+    if (tIdx < 0) return body;
+    const braceStart = body.indexOf('{', tIdx);
+    if (braceStart < 0) return body;
+    const braceEnd = matchBrace(body, braceStart);
+    const tryBody = body.slice(braceStart+1, braceEnd);
+    let pos = braceEnd+1;
+    const catches = [];
+    const catchRe = /^\s*catch\s*\(\s*(\w+)(?:\s+(\w+))?\s*\)\s*\{/;
+    while (true){
+      const rest = body.slice(pos);
+      const cm = rest.match(catchRe);
+      if (!cm) break;
+      const cBraceStart = pos + cm[0].length - 1;
+      const cBraceEnd = matchBrace(body, cBraceStart);
+      catches.push({ type: cm[1], varName: cm[2], body: body.slice(cBraceStart+1, cBraceEnd) });
+      pos = cBraceEnd+1;
+    }
+    let finallyBody = null;
+    const finRe = /^\s*finally\s*\{/;
+    const fm = body.slice(pos).match(finRe);
+    if (fm){
+      const fBraceStart = pos + fm[0].length - 1;
+      const fBraceEnd = matchBrace(body, fBraceStart);
+      finallyBody = body.slice(fBraceStart+1, fBraceEnd);
+      pos = fBraceEnd+1;
+    }
+    let chain = '';
+    catches.forEach((c, idx) => {
+      const cond = c.type === 'FormatException' ? "__e.kind === 'Format'" : 'true';
+      const varDecl = c.varName ? ('const ' + c.varName + ' = __e;') : '';
+      chain += (idx===0?'if':'else if') + ' (' + cond + ') { ' + varDecl + ' ' + c.body + ' }\n';
+    });
+    const replacement = 'try { ' + tryBody + ' } catch (__e) { ' + chain + ' } ' +
+                         (finallyBody !== null ? 'finally { ' + finallyBody + ' }' : '');
+    return body.slice(0, tIdx) + replacement + body.slice(pos);
+  }
+
+  // ---------- token-level C# -> JS translation ----------
+  function transpileTokens(body){
+    let s = body;
+    s = s.replace(/\bthrow new Exception\(([^)]*)\)/g, "(function(){ throw {kind:'General', message: $1}; })()");
+    s = s.replace(/\b(int|double|float|bool|string)\[\]\s+(\w+)/g, 'let $2');
+    s = s.replace(/\b(int|double|float|bool|string)\s+(\w+)\s*=/g, 'let $2 =');
+    s = s.replace(/Convert\.ToInt32\(\s*Console\.ReadLine\(\)\s*\)/g, 'toInt32(nextInput())');
+    s = s.replace(/Convert\.ToDouble\(\s*Console\.ReadLine\(\)\s*\)/g, 'toDouble(nextInput())');
+    s = s.replace(/Console\.ReadLine\(\)/g, 'nextInput()');
+    s = s.replace(/Console\.WriteLine\(/g, 'WL(');
+    s = s.replace(/Console\.Write\(/g, 'W(');
+    s = s.replace(/(\w+)\.Split\(\s*'([^']*)'\s*,\s*StringSplitOptions\.RemoveEmptyEntries\s*\)/g,
+                  "$1.split('$2').filter(function(w){ return w.length>0; })");
+    s = s.replace(/\.Message\b/g, '.message');
+    s = s.replace(/\.Length\b/g, '.length');
+    return s;
+  }
+
+  function renderOutput(lines, ok){
+    const head = 'Execution started\nCompilation successful\nOutput:-\n\n';
+    const body = lines.join('\n');
+    const tail = ok ? '\n\nProgram compiled and executed.' : '\n\nProgram terminated with an unhandled exception.';
+    const cls = ok ? 'ok' : 'fail';
+    return escapeHtml(head) + escapeHtml(body) + '<span class="' + cls + '">' + escapeHtml(tail) + '</span>';
+  }
+
+  function escapeHtml(str){
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function runProject(id){
+    const codeEl = document.getElementById('code-'+id);
+    const inputEl = document.getElementById('input-'+id);
+    const outEl = document.getElementById('output-'+id);
+    const code = codeEl.value;
+    const inputs = inputEl ? inputEl.value.split('\n') : [];
+    let ptr = 0;
+
+    function nextInput(){
+      if (ptr < inputs.length) return inputs[ptr++];
+      return null;
+    }
+    function toInt32(v){
+      if (v === null || v.trim() === '' || isNaN(parseInt(v,10))){
+        throw { kind:'Format', message:'Input string was not in a correct format.' };
+      }
+      return parseInt(v,10);
+    }
+    function toDouble(v){
+      if (v === null || v.trim() === '' || isNaN(parseFloat(v))){
+        throw { kind:'Format', message:'Input string was not in a correct format.' };
+      }
+      return parseFloat(v);
+    }
+    let buffer = '';
+    const outputLines = [];
+    function W(s){ buffer += (s===undefined?'':String(s)); }
+    function WL(s){ outputLines.push(buffer + (s===undefined?'':String(s))); buffer=''; }
+
+    try {
+      let body = extractMainBody(code);
+      if (body === null){
+        outEl.innerHTML = '<span class="fail">Could not find a Main method to run.</span>';
+        return;
+      }
+      body = transpileTryCatch(body);
+      body = transpileTokens(body);
+      const fn = new Function('nextInput','toInt32','toDouble','W','WL', body);
+      fn(nextInput, toInt32, toDouble, W, WL);
+      if (buffer) outputLines.push(buffer);
+      outEl.innerHTML = renderOutput(outputLines, true);
+    } catch (e){
+      if (buffer) outputLines.push(buffer);
+      const msg = (e && e.message) ? e.message : String(e);
+      outputLines.push('Unhandled Exception: ' + msg);
+      outEl.innerHTML = renderOutput(outputLines, false);
+    }
+  }
+
+  // ---------- static expected output for OOP / file-IO projects ----------
+  const EXPECTED = {
+    p7: 'Tommy is eating.\nTommy is barking.\n\nBruno is eating.\nBruno is barking.\n\nRocky is eating.\nRocky is barking.\n\nMax2025 is eating.\nMax2025 is barking.\n\nCharlie is eating.\nCharlie is barking.',
+    p8: 'When the user enters 10 and 20 → 30\nWhen the user enters 0 and 0 → 0\nWhen the user enters -5 and 15 → 10\nWhen the user enters 100 and 200 → 300\nWhen the user enters -10 and -20 → -30',
+    p9: 'Enter student name: Aditi\nEnter marks: 88\nStudent Name: Aditi\nMarks: 88',
+    p10: 'Example 1 (no existing file):\nNew blank file created: sample.txt\n\nExample 2 (file already exists):\nFile already exists. Deleting the file...\nFile deleted successfully.\nNew blank file created: sample.txt'
+  };
+
+  function showExpected(id){
+    const outEl = document.getElementById('output-'+id);
+    outEl.innerHTML = '<span class="muted">// worked example output, reproduced from the problem statement</span>\n\n' + escapeHtml(EXPECTED[id]);
+  }
+</script>
+</body>
+</html>
